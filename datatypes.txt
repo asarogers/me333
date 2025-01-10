@@ -1,0 +1,5 @@
+ascii       name    #bytes           range
+character   char      1             0 - 255
+integer     integer   4            0 - 4294967296
+float       float     4                 -+2^256
+double      double    8 & 4(pic32)           -+2^2048

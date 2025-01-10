@@ -1,0 +1,44 @@
+1. 
+#include <stdio.h>
+int main(void){
+    // printf("Hello\n World!\r");
+    printf("Hello World! \n");
+    return 0;
+}
+
+
+2. A pointer stores the location of data, while a non pointer variable stores the value of that data.
+
+3. Compiled code is converted into machine code ahead of time by a compiler into machine code, so it can be executed directly by the computer, making it faster. While interpreted code is executed line by line by an interpreter at runtime, which translates it into machine code, then executes it, which slows it down.
+
+4. 0x1E: 30(base 10), 11110 (base 2) 
+   0x32: 50(base 10), 110010(base 2)
+   0xFE: 254(base 10), 11111110(base 2)
+   0xC4: 196(base 10), 11000100(base 2)
+
+hexidemicals:
+0-9 A, B, C,D,E,F
+
+
+6. (2 ^ 16) * 8 = 524,288
+
+7. (A): 107 = 'k' (B): '5'=53 (C): '=' = 61 (D): '?' = 63
+
+8. unsigned char: 0 to 255
+    short: unsigned: 0 to 65536, signed: -32,768 to 32,767
+    double: -2^2048 to 2^2048
+
+10. Unsigned integers  are positive(0 to 4294967296) while signed integers include negative(-2147483648 to 2147483647)
+
+11. (A) char is smaller than integer, which reduce memory requirements. Problem with this is if you need to store a value above 255 then you will have an error, which is why we need integers. Issue that occurs here is inegers take up a lot more room than chars. 
+(B)Floats are better for performance when precision is better, but doubles are good for heigh-precision with very small are very large numbers. 
+(C) Floats are a good choice when you are dealing with fractions that are above 255 or below -128, but an issue with this is your computer has to have a FPU to handle floating points.
+
+
+16. A long is most similiar becuase it occupies 98 bytes
+
+17.
+0xB0..0xB3: 12 00 00 00
+0xB4..0xB7: 12 00 00 00
+0xB8: B0
+0xB9: B0
