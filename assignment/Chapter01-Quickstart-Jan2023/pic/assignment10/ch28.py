@@ -1,5 +1,7 @@
 import serial
 import matplotlib.pyplot as plt
+import genref
+
 
 # Open serial connection
 ser = serial.Serial('/dev/ttyUSB0', 230400)
@@ -11,12 +13,13 @@ has_quit = False
 while not has_quit:
     print('\nPIC32 MOTOR DRIVER INTERFACE')
     print('\ta: Read ADC (raw counts)\tb: Read current sensor (mA)')
-    print('\tc: Read encoder count\td: Read encoder degrees\te: Reset encoder')
-    print('\tf: Set PWM (-100 to 100)\tp: Unpower motor')
-    print('\tg: Set current gains\th: Get current gains')
-    print('\tr: Get mode\t\tk: Run ITEST mode')
-    print('\ti: Set position gains\tj: Get position gains')
-    print('\tl: Go to angle (deg)\tq: Quit')
+    print('\tc: Read encoder count\t\td: Read encoder degrees\t\te: Reset encoder')
+    print('\tf: Set PWM (-100 to 100)\tg: Set current gains\t\th: Get current gains')
+    print('\ti: Set position gains\t\tj: Get position gains')
+    print('\tk: Run ITEST mode\t\tl: Go to angle (deg)')
+    print('\tm: Load step trajectory\t\tn: Load cubic trajectory\to: Execute trajectory')
+    print('\tp: Unpower motor\t\tr: Get mode\t\t\tq: Quit')
+
 
     # Get user command
     selection = input('\nENTER COMMAND: ')
@@ -97,11 +100,27 @@ while not has_quit:
     elif selection == 'l':  # Set target position (Go to angle)
         angle = input('Enter desired angle (degrees): ')
         ser.write((angle + '\n').encode())
-
-        # Read confirmation from PIC32
-        response = ser.read_until(b'\n').decode().strip()
-        print(f'PIC32 Response: {response}')
+    
+    elif selection == 'm':  # Set target position (Go to angle)
+        generated_trajectory = genref.genRef("step")
+        # response = ser.read_until(b'\n').decode().strip()
+        # print(f'M: {response}')
         
+    elif selection == 'n':  # Set target position (Go to angle)
+        generated_trajectory = genref.genRef("cubic")
+        
+    elif selection == 'o':
+        print(generated_trajectory)
+        ser.write(f'{len(generated_trajectory)}\n'.encode())
+
+        for point in generated_trajectory:
+            # print(point)
+            ser.write(f"{point}\n".encode())
+
+        response = ser.read_until(b'\n').decode().strip()
+        print(f'{response}')
+
+
     elif selection == 'p':  # Unpower motor (set mode to IDLE)
         print('Motor unpowered (IDLE mode).')
 
