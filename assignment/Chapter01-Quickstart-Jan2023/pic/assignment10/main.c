@@ -20,6 +20,7 @@ volatile float refCurrentFromPosition = 0;  // Global variablepwmDuty
 static int actualCurrentArray[100];
 static int refCurrentArray[100];
 volatile float trajectory[MAX_TRAJECTORY_SAMPLES];
+volatile float actualTrajectory[MAX_TRAJECTORY_SAMPLES];
 volatile int trajectory_length = 0;
 volatile int trajectory_index = 0;
 
@@ -161,10 +162,7 @@ void __ISR(_TIMER_1_VECTOR, IPL6SOFT) PositionController(void)
             // PID Controller
             float errorAng = desired_deg - actualAngle;
 
-            // char debug_msg[100];
-            // int encoder_count = get_encoder_count();
-            // sprintf(debug_msg, "desired_deg: %f actualAngle : %f\r\n", desired_deg, actualAngle);
-            // NU32DIP_WriteUART1(debug_msg);
+            
 
             if (!errorAng){
                 errorAng = 0;
@@ -192,7 +190,7 @@ void __ISR(_TIMER_1_VECTOR, IPL6SOFT) PositionController(void)
             }
             
             prevError = errorAng;
-            
+            break;
             
         }
     case TRACK: {
@@ -200,7 +198,12 @@ void __ISR(_TIMER_1_VECTOR, IPL6SOFT) PositionController(void)
             desired_deg = trajectory[trajectory_index]; // Set desired position
             trajectory_index++;
         } else {
+            WriteUART2("b");
             set_mode(HOLD);  // Hold the last position
+            char debug_msg[100];
+            sprintf(debug_msg, "Completed trajectory, trajectory_index reset, new mode: %d\n\r", get_mode());
+            NU32DIP_WriteUART1(debug_msg);
+            // sendDataToPython(trajectory, actualTrajectory, trajectory_length);
         }
     
         // Encoder reading and PID calculations remain the same
@@ -209,6 +212,7 @@ void __ISR(_TIMER_1_VECTOR, IPL6SOFT) PositionController(void)
         set_encoder_flag(0);
         
         float actualAngle = 360.0 * ((float)get_encoder_count() / (334.0 * 4.0));
+        actualTrajectory[trajectory_index] = actualAngle;
         float errorAng = desired_deg - actualAngle;
     
         static int integralAngle = 0;
@@ -223,6 +227,19 @@ void __ISR(_TIMER_1_VECTOR, IPL6SOFT) PositionController(void)
         float cap = 500;
         if (refCurrentFromPosition > cap) refCurrentFromPosition = cap;
         else if (refCurrentFromPosition < -cap) refCurrentFromPosition = -cap;
+
+
+        // if(trajectory_index >= trajectory_length){
+        //     char debug_msg[100];
+        //     // int encoder_count = get_encoder_count();
+            
+
+        //     // sprintf(buffer, "%d %d\n", refArray[i], actualArray[i]);
+        //     // NU32DIP_WriteUART1(buffer);
+
+            
+        //     set_mode(IDLE);
+        // }
     
         prevError = errorAng;
         break;
@@ -389,7 +406,7 @@ int main() {
 
 
                 set_mode(TRACK);
-                NU32DIP_WriteUART1("Tracking trajectory.\r\n");
+                // NU32DIP_WriteUART1("Tracking trajectory.\r\n");
                 break;
             }
             

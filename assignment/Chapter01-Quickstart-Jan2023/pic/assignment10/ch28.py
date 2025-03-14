@@ -110,15 +110,25 @@ while not has_quit:
         generated_trajectory = genref.genRef("cubic")
         
     elif selection == 'o':
-        print(generated_trajectory)
+        # print(generated_trajectory)
         ser.write(f'{len(generated_trajectory)}\n'.encode())
 
         for point in generated_trajectory:
             # print(point)
             ser.write(f"{point}\n".encode())
-
+        
         response = ser.read_until(b'\n').decode().strip()
         print(f'{response}')
+
+        # for _ in range(len(generated_trajectory)):
+        #     response = ser.read_until(b'\n').decode().strip()
+        #     try:
+        #         ref, actual = map(float, response.split())
+        #         print(f"ref = {ref}, actual = {actual}")
+        #         # trajectory.append(ref)
+        #         # actual_trajectory.append(actual)
+        #     except ValueError:
+        #         print(f"Invalid data received: {response}")
 
 
     elif selection == 'p':  # Unpower motor (set mode to IDLE)
